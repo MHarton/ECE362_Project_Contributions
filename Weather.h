@@ -9,6 +9,7 @@
 
 //Initialization
 extern const char status[] = "AT\r\n";
+extern const char echoff[] = "ATE0\r\n";
 extern const char choosemod[]= "AT+CWMODE=1\r\n";
 extern const char connect[] = "AT+CWJAP=\"NetworkName\",\"password\"\r\n";
 
