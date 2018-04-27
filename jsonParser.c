@@ -25,16 +25,21 @@ int jsonParse(jtable jsonTab, wdata *wdat)
 {
     int dlength = strlen("\"description\":\"");
     int mlength = strlen("\"main\":{\"temp\":");
+    int dinner;
+    int minner;
     //printf("%d", mlength);
     for(int i = 0; i < jsonTab.count; i++)
     {         
        if(!strncmp(jsonTab.jsonTable[i], "\"description\":\"", dlength))
        {            
-            for(int j = dlength; j < strlen(jsonTab.jsonTable[i])-1; j++)
+    	    dinner = strlen(jsonTab.jsonTable[i])-1;
+
+    	   	for(int j = dlength; j < dinner; j++)
             {
                 wdat->weather[j-dlength] = jsonTab.jsonTable[i][j]; 
             }          
-            for(int k = (strlen(jsonTab.jsonTable[i])-1); k < 50; k++)
+    	   	wdat->weather[dinner-dlength] = '\n';
+            for(int k = dinner+1; k < 50; k++)
             {
                 wdat->weather[k-dlength] = '\0';
 
@@ -44,11 +49,13 @@ int jsonParse(jtable jsonTab, wdata *wdat)
         if(!strncmp(jsonTab.jsonTable[i], "\"main\":{\"temp\":", mlength))
        {            
 
-            for(int j = mlength; j < strlen(jsonTab.jsonTable[i]); j++)
+    	    minner = strlen(jsonTab.jsonTable[i])-1;
+            for(int j = mlength; j < minner; j++)
             {
                 wdat->temp[j-mlength] = jsonTab.jsonTable[i][j]; 
-            }               
-            for(int k = (strlen(jsonTab.jsonTable[i])-1); k < 50; k++)
+            }
+            wdat->temp[minner-mlength] = 'F';
+            for(int k = minner+1; k < 50; k++)
             {
                 wdat->temp[k-mlength] = '\0';
 
