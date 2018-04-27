@@ -58,7 +58,7 @@ UART_HandleTypeDef huart1;
 unsigned char status[] = "AT\r\n";
 unsigned char echoff[] = "ATE0\r\n";
 unsigned char choosemod[]= "AT+CWMODE=1\r\n";
-unsigned char connect[] = "AT+CWJAP=\"lynksys\",\"\"\r\n";
+unsigned char connect[80] = "AT+CWJAP=\"lynksys\",\"\"\r\n";
 unsigned char rset[]  = "AT+RST\r\n";
 unsigned char start_sock_test[] ="AT+CIPSTART=\"TCP\",\"httpbin.org\",80\r\n";
 unsigned char start_sock_weather[] ="AT+CIPSTART=\"TCP\",\"api.openweathermap.org\",80\r\n";
@@ -298,6 +298,25 @@ void HAL_UART_RxCpltCallback (UART_HandleTypeDef * huart)
 	HAL_UART_Receive_IT(&huart1, pdata, 1);
 }
 
+int initialize_WIFI()
+{
+	  HAL_UART_Receive_IT(&huart1, pdata, 1);
+	  HAL_UART_Transmit(&huart1, rset, strlen(rset), 800);
+	  HAL_UART_Receive_IT(&huart1, pdata, 1);
+	  HAL_Delay(500);
+	  while(strncmp(buffer, "ready", 5))
+	  {
+	     buff_flag = 1;
+	  }
+	  HAL_UART_Transmit(&huart1, connect, strlen(connect), 800);
+	  HAL_UART_Receive_IT(&huart1, pdata, 1);
+	  HAL_Delay(500);
+	  while(strncmp(buffer, "OK", 2))
+	  {
+	     buff_flag = 1;
+	  }
+	  return 1;
+}
 int grab_Weather()
 {
 	  HAL_UART_Transmit(&huart1, start_sock_weather, strlen(start_sock_weather), 800);
@@ -325,27 +344,11 @@ int grab_Weather()
 	  strncpy(jstr, buffer, strlen(buffer));
 	  jTabby = split_a_string(buffer);
 	  jsonParse(*jTabby, curr_weather);
+	  HAL_Delay(1000);
+
 	  return 1;
 }
-int initialize_WIFI()
-{
-	  HAL_UART_Receive_IT(&huart1, pdata, 1);
-	  HAL_UART_Transmit(&huart1, rset, strlen(rset), 800);
-	  HAL_UART_Receive_IT(&huart1, pdata, 1);
-	  HAL_Delay(500);
-	  while(strncmp(buffer, "ready", 5))
-	  {
-	     buff_flag = 1;
-	  }
-	  HAL_UART_Transmit(&huart1, connect, strlen(connect), 800);
-	  HAL_UART_Receive_IT(&huart1, pdata, 1);
-	  HAL_Delay(500);
-	  while(strncmp(buffer, "OK", 2))
-	  {
-	     buff_flag = 1;
-	  }
-	  return 1;
-}
+
 
 int test_Weather_UART()
 {
@@ -369,6 +372,7 @@ int free_everything()
 	  free_jTable(jTabby);
 	  clean_Weather(curr_weather);
 	  free_Weather(curr_weather);
+	  free(jstr);
 	  return 1;
 }
 
