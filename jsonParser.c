@@ -34,6 +34,11 @@ int jsonParse(jtable jsonTab, wdata *wdat)
             {
                 wdat->weather[j-dlength] = jsonTab.jsonTable[i][j]; 
             }          
+            for(int k = (strlen(jsonTab.jsonTable[i])-1); k < 50; k++)
+            {
+                wdat->weather[k-dlength] = '\0';
+
+            }
             //wdat->weather[(strlen(jsonTab.jsonTable[i])-dlength)] = '\0';          
        }       
         if(!strncmp(jsonTab.jsonTable[i], "\"main\":{\"temp\":", mlength))
@@ -43,9 +48,15 @@ int jsonParse(jtable jsonTab, wdata *wdat)
             {
                 wdat->temp[j-mlength] = jsonTab.jsonTable[i][j]; 
             }               
+            for(int k = (strlen(jsonTab.jsonTable[i])-1); k < 50; k++)
+            {
+                wdat->temp[k-mlength] = '\0';
+
+            }
             //wdat->temp[(strlen(jsonTab.jsonTable[i])-mlength)] = '\0';          
        }
     }
+
     return 0;
 }
 
